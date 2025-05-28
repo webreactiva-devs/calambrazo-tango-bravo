@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\KahootGame;
 use Illuminate\Http\Request;
 
 class KahootGameController extends Controller
@@ -11,7 +12,8 @@ class KahootGameController extends Controller
      */
     public function index()
     {
-        //
+        $kahoot_games = KahootGame::all();
+        return view('kahoot-games.index', compact('kahoot_games'));
     }
 
     /**
@@ -19,7 +21,7 @@ class KahootGameController extends Controller
      */
     public function create()
     {
-        //
+        return view('kahoot-games.create');
     }
 
     /**
@@ -27,38 +29,53 @@ class KahootGameController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'nombre_concurso' => 'required|string',
+            'fecha_celebracion' => 'required|date',
+            'numero_participantes' => 'required|integer',
+        ]);
+
+        KahootGame::create($validated);
+        return redirect()->route('kahoot-games.index');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(KahootGame $kahoot_game)
     {
-        //
+        return view('kahoot-games.show', compact('kahoot_game'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(KahootGame $kahoot_game)
     {
-        //
+        return view('kahoot-games.edit', compact('kahoot_game'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, KahootGame $kahoot_game)
     {
-        //
+        $validated = $request->validate([
+            'nombre_concurso' => 'required|string',
+            'fecha_celebracion' => 'required|date',
+            'numero_participantes' => 'required|integer',
+        ]);
+
+        $kahoot_game->update($validated);
+        return redirect()->route('kahoot-games.index');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(KahootGame $kahoot_game)
     {
-        //
+        $kahoot_game->delete();
+        return redirect()->route('kahoot-games.index');
     }
 }
