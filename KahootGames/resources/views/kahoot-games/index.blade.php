@@ -12,9 +12,49 @@
         <table class="min-w-full mt-6 bg-white border border-gray-200 rounded shadow-sm">
             <thead class="bg-gray-100 text-left">
             <tr>
-                <th class="px-4 py-2 font-bold">Nombre</th>
-                <th class="px-4 py-2 font-bold">Fecha</th>
-                <th class="px-4 py-2 font-bold">Participantes</th>
+                <th class="px-4 py-2 font-bold">
+                    <a href="{{ route('kahoot-games.index', [
+                         'ordenado_por' => 'nombre_concurso',
+                         'orden' => $orden == 'asc' ? 'desc' : 'asc'
+                    ])}}">
+                        Nombre
+                        @if ($ordenado_por == 'nombre_concurso')
+                            <span class="text-sm">{{ $orden == 'asc' ? '↑' : '↓' }}</span>
+                        @else
+                            <span class="text-gray-400">⇅</span>
+                        @endif
+                    </a>
+                </th>
+                <th class="px-4 py-2 font-bold">
+                    <a href="{{ route('kahoot-games.index',
+                                [
+                                    'ordenado_por' => 'fecha_celebracion',
+                                    'orden' => $orden == 'asc' ? 'desc' : 'asc'
+                                ]
+                                )}}">
+                        Fecha
+                        @if ($ordenado_por == 'fecha_celebracion')
+                            <span class="text-sm">{{ $orden == 'asc' ? '↑' : '↓' }}</span>
+                        @else
+                            <span class="text-gray-400">⇅</span>
+                        @endif
+                    </a>
+                </th>
+                <th class="px-4 py-2 font-bold">
+                    <a href="{{ route('kahoot-games.index',
+                                [
+                                    'ordenado_por' => 'numero_participantes',
+                                    'orden' => $orden == 'asc' ? 'desc' : 'asc'
+                                ]
+                                )}}">
+                        Participantes
+                        @if ($ordenado_por == 'numero_participantes')
+                            <span class="text-sm">{{ $orden == 'asc' ? '↑' : '↓' }}</span>
+                        @else
+                            <span class="text-gray-400">⇅</span>
+                        @endif
+                    </a>
+                </th>
                 <th class="px-4 py-2 font-bold">Acciones</th>
             </tr>
             </thead>
@@ -36,5 +76,8 @@
             @endforeach
             </tbody>
         </table>
+        <div class="mt-4">
+            {{ $kahoot_games->links() }}
+        </div>
     </div>
 </x-app-layout>

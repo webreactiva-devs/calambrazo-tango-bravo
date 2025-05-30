@@ -10,10 +10,18 @@ class KahootGameController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $kahoot_games = KahootGame::all();
-        return view('kahoot-games.index', compact('kahoot_games'));
+        // Valor por defecto de los parámetros de orden y dirección
+        $ordenado_por = $request->input('ordenado_por', 'nombre_concurso');
+        $orden = $request->input('orden', 'asc');
+
+        $porPagina = config('kahoot.pagination'); // Número de elementos por página
+
+        // Obtener los juegos ordenados y con paginación
+        $kahoot_games = KahootGame::orderBy($ordenado_por, $orden)->paginate($porPagina);
+
+        return view('kahoot-games.index', compact('kahoot_games', 'ordenado_por', 'orden'));
     }
 
     /**
