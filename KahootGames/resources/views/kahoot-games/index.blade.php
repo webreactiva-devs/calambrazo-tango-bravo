@@ -4,6 +4,7 @@
     </x-slot>
 
     <div class="py-4 px-6 mt-4">
+
         <a href="{{ route('kahoot-games.create') }}" class="btn-accion">
             Crear nuevo Kahoot
         </a>
