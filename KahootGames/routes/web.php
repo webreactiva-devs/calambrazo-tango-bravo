@@ -17,6 +17,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::resource('kahoot-games', KahootGameController::class);
+    Route::post('/kahoot-games', [KahootGameController::class, 'index'])->name('kahoot-games.index');
 });
 
 require __DIR__.'/auth.php';

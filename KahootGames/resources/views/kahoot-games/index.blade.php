@@ -9,51 +9,46 @@
             Crear nuevo Kahoot
         </a>
 
+        {{-- Formulario oculto para orden y paginación --}}
+        <form id="form_ordenacion" method="POST" action="{{ route('kahoot-games.index') }}">
+            @csrf
+            <input type="hidden" name="ordenado_por" id="ordenado_por" value="{{ $ordenado_por }}">
+            <input type="hidden" name="orden" id="orden" value="{{ $orden }}">
+            <input type="hidden" name="page" id="pageInput" value="1">
+        </form>
+
         <table class="min-w-full mt-6 bg-white border border-gray-200 rounded shadow-sm">
             <thead class="bg-gray-100 text-left">
             <tr>
                 <th class="px-4 py-2 font-bold">
-                    <a href="{{ route('kahoot-games.index', [
-                         'ordenado_por' => 'nombre_concurso',
-                         'orden' => $orden == 'asc' ? 'desc' : 'asc'
-                    ])}}">
+                    <button type="button" onclick="ordenarPor('nombre_concurso')" class="flex items-center gap-1">
                         Nombre
                         @if ($ordenado_por == 'nombre_concurso')
                             <span class="text-sm">{{ $orden == 'asc' ? '↑' : '↓' }}</span>
                         @else
                             <span class="text-gray-400">⇅</span>
                         @endif
-                    </a>
+                    </button>
                 </th>
                 <th class="px-4 py-2 font-bold">
-                    <a href="{{ route('kahoot-games.index',
-                                [
-                                    'ordenado_por' => 'fecha_celebracion',
-                                    'orden' => $orden == 'asc' ? 'desc' : 'asc'
-                                ]
-                                )}}">
+                    <button type="button" onclick="ordenarPor('fecha_celebracion')" class="flex items-center gap-1">
                         Fecha
                         @if ($ordenado_por == 'fecha_celebracion')
                             <span class="text-sm">{{ $orden == 'asc' ? '↑' : '↓' }}</span>
                         @else
                             <span class="text-gray-400">⇅</span>
                         @endif
-                    </a>
+                    </button>
                 </th>
                 <th class="px-4 py-2 font-bold">
-                    <a href="{{ route('kahoot-games.index',
-                                [
-                                    'ordenado_por' => 'numero_participantes',
-                                    'orden' => $orden == 'asc' ? 'desc' : 'asc'
-                                ]
-                                )}}">
+                    <button type="button" onclick="ordenarPor('numero_participantes')" class="flex items-center gap-1">
                         Participantes
                         @if ($ordenado_por == 'numero_participantes')
                             <span class="text-sm">{{ $orden == 'asc' ? '↑' : '↓' }}</span>
                         @else
                             <span class="text-gray-400">⇅</span>
                         @endif
-                    </a>
+                    </button>
                 </th>
                 <th class="px-4 py-2 font-bold">Acciones</th>
             </tr>
@@ -76,8 +71,8 @@
             @endforeach
             </tbody>
         </table>
-        <div class="mt-4">
-            {{ $kahoot_games->links() }}
+        <div class="mt-4 pagination-links" >
+            {!! $kahoot_games->links() !!}
         </div>
     </div>
 </x-app-layout>

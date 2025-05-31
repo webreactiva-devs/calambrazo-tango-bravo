@@ -13,13 +13,15 @@ class KahootGameController extends Controller
     public function index(Request $request)
     {
         // Valor por defecto de los parámetros de orden y dirección
-        $ordenado_por = $request->input('ordenado_por', 'nombre_concurso');
-        $orden = $request->input('orden', 'asc');
+        $ordenado_por = $request->post('ordenado_por', 'nombre_concurso');
+        $orden = $request->post('orden', 'asc');
+        $page = $request->post('page', 1);
 
         $porPagina = config('kahoot.pagination'); // Número de elementos por página
 
         // Obtener los juegos ordenados y con paginación
-        $kahoot_games = KahootGame::orderBy($ordenado_por, $orden)->paginate($porPagina);
+        $kahoot_games = KahootGame::orderBy($ordenado_por, $orden)
+            ->paginate($porPagina,['*'], 'page', $page);
 
         return view('kahoot-games.index', compact('kahoot_games', 'ordenado_por', 'orden'));
     }
