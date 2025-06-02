@@ -10,11 +10,17 @@
         </a>
 
         {{-- Formulario oculto para orden y paginación --}}
-        <form id="form_ordenacion" method="POST" action="{{ route('kahoot-games.index') }}">
+        <form id="form_ordenacion" method="POST" action="{{ route('kahoot-games.filter') }}">
             @csrf
             <input type="hidden" name="ordenado_por" id="ordenado_por" value="{{ $ordenado_por }}">
             <input type="hidden" name="orden" id="orden" value="{{ $orden }}">
             <input type="hidden" name="page" id="pageInput" value="1">
+
+            <div class="mb-4 flex gap-2 mt-8">
+                <input type="text" name="search_by_name" placeholder="Buscar por nombre..." value="{{ $search_by_name }}"
+                       class="border rounded px-3 py-1 w-full" />
+                <button type="submit" class="btn-accion">Buscar</button>
+            </div>
         </form>
 
         <table class="min-w-full mt-6 bg-white border border-gray-200 rounded shadow-sm">
@@ -71,7 +77,7 @@
             @endforeach
             </tbody>
         </table>
-        <div class="mt-4 pagination-links" >
+        <div class="mt-4 pagination-links">
             {!! $kahoot_games->links() !!}
         </div>
     </div>
