@@ -10,7 +10,7 @@
         </a>
 
         {{-- Formulario oculto para orden y paginación --}}
-        <form id="order_form" method="POST" action="{{ route('kahoot-games.filter') }}">
+        <form id="order_form" method="POST" action="{{ route('kahoot-games.filtered') }}">
             @csrf
             <input type="hidden" name="order_by" id="order_by" value="{{ $order_by }}">
             <input type="hidden" name="order" id="order" value="{{ $order }}">

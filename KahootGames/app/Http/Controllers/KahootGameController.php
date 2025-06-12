@@ -13,6 +13,25 @@ class KahootGameController extends Controller
     public function index(Request $request)
     {
         // Default values
+        $order_by = 'nombre_concurso';
+        $order = 'asc';
+        $search_by_name = '';
+
+        // Number of items per page
+        $itemsPerPage = config('kahoot.pagination');
+
+        $kahoot_games = KahootGame::orderBy($order_by, $order)
+            ->paginate($itemsPerPage);
+
+        return view('kahoot-games.index',
+            compact('kahoot_games', 'order_by', 'order', 'search_by_name')
+        );
+    }
+
+
+    public function filtered(Request $request)
+    {
+        // Values
         $order_by = $request->post('order_by', 'nombre_concurso');
         $order = $request->post('order', 'asc');
         $page = $request->post('page', 1);
@@ -24,7 +43,7 @@ class KahootGameController extends Controller
         // Get the games ordered, with pagination and search (if any)
         $kahoot_games = KahootGame::when($search_by_name, function ($query, $search_by_name) {
             return $query->where('nombre_concurso', 'like', "%$search_by_name%");
-            })
+        })
             ->orderBy($order_by, $order)
             ->paginate($itemsPerPage, ['*'], 'page', $page);
 
