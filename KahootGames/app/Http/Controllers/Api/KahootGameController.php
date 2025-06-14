@@ -35,13 +35,10 @@ class KahootGameController extends Controller
     {
 
         try{
-            $request->merge([
-                'event_date' => \Carbon\Carbon::createFromFormat('d-m-Y', $request->event_date)->format('Y-m-d')
-            ]);
 
             $validated = $request->validate([
                 'contest_name' => 'required|string|max:255',
-                'event_date' => 'required|date',
+                'event_date' => 'required|date_format:d-m-Y',
                 'participants' => 'required|integer|min:1',
             ]);
 
@@ -53,7 +50,7 @@ class KahootGameController extends Controller
 
             $kahoot = KahootGame::create([
                 'nombre_concurso' => $validated['contest_name'],
-                'fecha_celebracion' => $validated['event_date'],
+                'fecha_celebracion' => \Carbon\Carbon::createFromFormat('d-m-Y', $validated['event_date']),
                 'numero_participantes' => $validated['participants'],
             ]);
 
@@ -68,7 +65,6 @@ class KahootGameController extends Controller
                 'errors' => $e->errors()
             ], 422);
         }
-
     }
 
     /**
@@ -91,41 +87,50 @@ class KahootGameController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the specified Kahoot game.
      */
     public function update(Request $request, string $id)
     {
-        $validated = $request->validate([
-            'contest_name' => 'required|string|max:255',
-            'event_date' => 'required|date_format:d-m-Y',
-            'participants' => 'required|integer|min:1',
-        ]);
+        try{
 
-        $kahoot = KahootGame::find($id);
-        if (!$kahoot) {
-            return response()->json([
-                'message' => 'Kahoot game not found.'
-            ], 404);
-        }
+            $validated = $request->validate([
+                'contest_name' => 'required|string|max:255',
+                'event_date' => 'required|date_format:d-m-Y',
+                'participants' => 'required|integer|min:1',
+            ]);
 
-        if (KahootGame::where('nombre_concurso', $validated['contest_name'])
+            $kahoot = KahootGame::find($id);
+            if (!$kahoot) {
+                return response()->json([
+                    'message' => 'Kahoot game not found.'
+                ], 404);
+            }
+
+            if (KahootGame::where('nombre_concurso', $validated['contest_name'])
                 ->where('id', '!=', $id)
                 ->exists()) {
+                return response()->json([
+                    'message' => 'A Kahoot game with this name already exists.'
+                ], 409);
+            }
+
+            $kahoot->update([
+                'nombre_concurso' => $validated['contest_name'],
+                'fecha_celebracion' => \Carbon\Carbon::createFromFormat('d-m-Y', $validated['event_date']),
+                'numero_participantes' => $validated['participants'],
+            ]);
+
             return response()->json([
-                'message' => 'A Kahoot game with this name already exists.'
-            ], 409);
+                'message' => 'Kahoot game updated.',
+                'data' => $kahoot
+            ], 200);
         }
-
-        $kahoot->update([
-            'nombre_concurso' => $validated['contest_name'],
-            'fecha_celebracion' => \Carbon\Carbon::createFromFormat('d-m-Y', $validated['event_date']),
-            'numero_participantes' => $validated['participants'],
-        ]);
-
-        return response()->json([
-            'message' => 'Kahoot game updated.',
-            'data' => $kahoot
-        ], 200);
+        catch (ValidationException $e) {
+            return response()->json([
+                'message' => 'Invalid input.',
+                'errors' => $e->errors()
+            ], 422);
+        }
     }
 
     /**
