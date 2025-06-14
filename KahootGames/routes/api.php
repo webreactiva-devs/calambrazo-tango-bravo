@@ -12,4 +12,7 @@ Route::get('/user', function (Request $request) {
 Route::middleware('auth:api')->group(function () {
     Route::post('/kahoot-games', [KahootGameController::class, 'store']);
     Route::get('/kahoot-games', [KahootGameController::class, 'index']);
+    Route::get('/kahoot-games/{id}', [KahootGameController::class, 'show']);
+    Route::put('/kahoot-games/{id}', [KahootGameController::class, 'update']);
+    Route::delete('/kahoot-games/{id}', [KahootGameController::class, 'destroy']);
 });
