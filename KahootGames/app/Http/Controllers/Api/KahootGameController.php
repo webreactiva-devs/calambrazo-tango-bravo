@@ -18,9 +18,25 @@ class KahootGameController extends Controller
     /**
      * Display a listing of Kahoot games.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $kahoots = KahootGame::all();
+        $order_by = $request->query('order_by');
+        $order = strtolower($request->query('order'));
+
+        if (!$order_by) {
+            return response()->json([
+                'message' => 'The "order_by" parameter is required.'
+            ], 422);
+        }
+
+        if (!in_array($order, ['asc', 'desc'])) {
+            return response()->json([
+                'message' => 'The "order" parameter must be "asc" or "desc".'
+            ], 422);
+        }
+
+        $per_page = (int) $request->query('per_page', config('kahoot.api_pagination'));
+        $kahoots =  KahootGame::orderBy($order_by, $order)->paginate($per_page);
 
         return response()->json([
             'message' => 'List of Kahoot games.',
