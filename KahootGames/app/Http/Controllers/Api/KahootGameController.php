@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Http\Request;
 use App\Models\KahootGame;
 use Illuminate\Validation\ValidationException;
@@ -26,13 +27,13 @@ class KahootGameController extends Controller
         if (!$order_by) {
             return response()->json([
                 'message' => 'The "order_by" parameter is required.'
-            ], 422);
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         if (!in_array($order, ['asc', 'desc'])) {
             return response()->json([
                 'message' => 'The "order" parameter must be "asc" or "desc".'
-            ], 422);
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         $per_page = (int) $request->query('per_page', config('kahoot.api_pagination'));
@@ -41,7 +42,7 @@ class KahootGameController extends Controller
         return response()->json([
             'message' => 'List of Kahoot games.',
             'data' => $kahoots
-        ], 200);
+        ], Response::HTTP_OK);
     }
 
     /**
@@ -61,7 +62,7 @@ class KahootGameController extends Controller
             if (KahootGame::where('nombre_concurso', $validated['contest_name'])->exists()) {
                 return response()->json([
                     'message' => 'A kahoot game with this name already exists.'
-                ], 409);
+                ], Response::HTTP_CONFLICT);
             }
 
             $kahoot = KahootGame::create([
@@ -73,13 +74,13 @@ class KahootGameController extends Controller
             return response()->json([
                 'message' => 'Kahoot created.',
                 'data' => $kahoot
-            ], 201);
+            ], Response::HTTP_CREATED);
         }
         catch (ValidationException $e) {
             return response()->json([
                 'message' => 'Invalid input.',
                 'errors' => $e->errors()
-            ], 422);
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
     }
 
@@ -93,13 +94,13 @@ class KahootGameController extends Controller
         if (!$kahoot) {
             return response()->json([
                 'message' => 'Kahoot game not found.'
-            ], 404);
+            ], Response::HTTP_NOT_FOUND);
         }
 
         return response()->json([
             'message' => 'Kahoot game found.',
             'data' => $kahoot
-        ], 200);
+        ], Response::HTTP_OK);
     }
 
     /**
@@ -119,7 +120,7 @@ class KahootGameController extends Controller
             if (!$kahoot) {
                 return response()->json([
                     'message' => 'Kahoot game not found.'
-                ], 404);
+                ], Response::HTTP_NOT_FOUND);
             }
 
             if (KahootGame::where('nombre_concurso', $validated['contest_name'])
@@ -127,7 +128,7 @@ class KahootGameController extends Controller
                 ->exists()) {
                 return response()->json([
                     'message' => 'A Kahoot game with this name already exists.'
-                ], 409);
+                ], Response::HTTP_CONFLICT);
             }
 
             $kahoot->update([
@@ -139,13 +140,13 @@ class KahootGameController extends Controller
             return response()->json([
                 'message' => 'Kahoot game updated.',
                 'data' => $kahoot
-            ], 200);
+            ], Response::HTTP_OK);
         }
         catch (ValidationException $e) {
             return response()->json([
                 'message' => 'Invalid input.',
                 'errors' => $e->errors()
-            ], 422);
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
     }
 
@@ -159,13 +160,13 @@ class KahootGameController extends Controller
         if (!$kahoot) {
             return response()->json([
                 'message' => 'Kahoot game not found.'
-            ], 404);
+            ], Response::HTTP_NOT_FOUND);
         }
 
         $kahoot->delete();
 
         return response()->json([
             'message' => 'Kahoot game deleted'
-        ], 200);
+        ], Response::HTTP_OK);
     }
 }

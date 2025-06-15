@@ -9,7 +9,7 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:api');
 
-Route::middleware('auth:api')->group(function () {
+Route::middleware(['auth:api', 'custom.throttle:api_kahoot'])->group(function () {
     Route::post('/kahoot-games', [KahootGameController::class, 'store']);
     Route::get('/kahoot-games', [KahootGameController::class, 'index']);
     Route::get('/kahoot-games/{id}', [KahootGameController::class, 'show']);
