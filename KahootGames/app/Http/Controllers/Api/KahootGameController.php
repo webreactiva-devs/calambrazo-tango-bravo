@@ -23,6 +23,8 @@ class KahootGameController extends Controller
     {
         $order_by = $request->query('order_by', 'nombre_concurso');
         $order = strtolower($request->query('order', 'asc'));
+        $search = $request->query('search');
+        $per_page = (int) $request->query('per_page', config('kahoot.api_pagination'));
 
         if (!in_array($order, ['asc', 'desc'])) {
             return response()->json([
@@ -30,8 +32,12 @@ class KahootGameController extends Controller
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        $per_page = (int) $request->query('per_page', config('kahoot.api_pagination'));
-        $kahoots =  KahootGame::orderBy($order_by, $order)->paginate($per_page);
+        $query = KahootGame::query();
+        if ($search) {
+            $query->where('nombre_concurso', 'like', "%$search%");
+        }
+
+        $kahoots = $query->orderBy($order_by, $order)->paginate($per_page);
 
         return response()->json([
             'message' => 'List of Kahoot games.',
