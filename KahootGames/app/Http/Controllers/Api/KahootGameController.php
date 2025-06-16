@@ -39,6 +39,7 @@ class KahootGameController extends Controller
 
         $kahoots = $query->orderBy($order_by, $order)->paginate($per_page);
 
+
         return response()->json([
             'message' => 'List of Kahoot games.',
             'data' => $kahoots
