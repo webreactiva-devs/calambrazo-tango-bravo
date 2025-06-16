@@ -21,14 +21,8 @@ class KahootGameController extends Controller
      */
     public function index(Request $request)
     {
-        $order_by = $request->query('order_by');
-        $order = strtolower($request->query('order'));
-
-        if (!$order_by) {
-            return response()->json([
-                'message' => 'The "order_by" parameter is required.'
-            ], Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
+        $order_by = $request->query('order_by', 'nombre_concurso');
+        $order = strtolower($request->query('order', 'asc'));
 
         if (!in_array($order, ['asc', 'desc'])) {
             return response()->json([
@@ -151,7 +145,7 @@ class KahootGameController extends Controller
     }
 
     /**
-     * Remove the specified Kahoot game.
+     * Delete the specified Kahoot game.
      */
     public function destroy(string $id)
     {
