@@ -10,10 +10,10 @@
         </a>
 
         {{-- Formulario oculto para orden y paginación --}}
-        <form id="form_ordenacion" method="POST" action="{{ route('kahoot-games.filter') }}">
+        <form id="order_form" method="POST" action="{{ route('kahoot-games.filtered') }}">
             @csrf
-            <input type="hidden" name="ordenado_por" id="ordenado_por" value="{{ $ordenado_por }}">
-            <input type="hidden" name="orden" id="orden" value="{{ $orden }}">
+            <input type="hidden" name="order_by" id="order_by" value="{{ $order_by }}">
+            <input type="hidden" name="order" id="order" value="{{ $order }}">
             <input type="hidden" name="page" id="pageInput" value="1">
 
             <div class="mb-4 flex gap-2 mt-8">
@@ -27,30 +27,30 @@
             <thead class="bg-gray-100 text-left">
             <tr>
                 <th class="px-4 py-2 font-bold">
-                    <button type="button" onclick="ordenarPor('nombre_concurso')" class="flex items-center gap-1">
+                    <button type="button" onclick="orderedBy('nombre_concurso')" class="flex items-center gap-1">
                         Nombre
-                        @if ($ordenado_por == 'nombre_concurso')
-                            <span class="text-sm">{{ $orden == 'asc' ? '↑' : '↓' }}</span>
+                        @if ($order_by == 'nombre_concurso')
+                            <span class="text-sm">{{ $order == 'asc' ? '↑' : '↓' }}</span>
                         @else
                             <span class="text-gray-400">⇅</span>
                         @endif
                     </button>
                 </th>
                 <th class="px-4 py-2 font-bold">
-                    <button type="button" onclick="ordenarPor('fecha_celebracion')" class="flex items-center gap-1">
+                    <button type="button" onclick="orderedBy('fecha_celebracion')" class="flex items-center gap-1">
                         Fecha
-                        @if ($ordenado_por == 'fecha_celebracion')
-                            <span class="text-sm">{{ $orden == 'asc' ? '↑' : '↓' }}</span>
+                        @if ($order_by == 'fecha_celebracion')
+                            <span class="text-sm">{{ $order == 'asc' ? '↑' : '↓' }}</span>
                         @else
                             <span class="text-gray-400">⇅</span>
                         @endif
                     </button>
                 </th>
                 <th class="px-4 py-2 font-bold">
-                    <button type="button" onclick="ordenarPor('numero_participantes')" class="flex items-center gap-1">
+                    <button type="button" onclick="orderedBy('numero_participantes')" class="flex items-center gap-1">
                         Participantes
-                        @if ($ordenado_por == 'numero_participantes')
-                            <span class="text-sm">{{ $orden == 'asc' ? '↑' : '↓' }}</span>
+                        @if ($order_by == 'numero_participantes')
+                            <span class="text-sm">{{ $order == 'asc' ? '↑' : '↓' }}</span>
                         @else
                             <span class="text-gray-400">⇅</span>
                         @endif

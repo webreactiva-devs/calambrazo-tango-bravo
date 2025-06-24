@@ -12,23 +12,43 @@ class KahootGameController extends Controller
      */
     public function index(Request $request)
     {
-        // Valor por defecto de los parámetros de orden y dirección
-        $ordenado_por = $request->post('ordenado_por', 'nombre_concurso');
-        $orden = $request->post('orden', 'asc');
+        // Default values
+        $order_by = 'nombre_concurso';
+        $order = 'asc';
+        $search_by_name = '';
+
+        // Number of items per page
+        $itemsPerPage = config('kahoot.pagination');
+
+        $kahoot_games = KahootGame::orderBy($order_by, $order)
+            ->paginate($itemsPerPage);
+
+        return view('kahoot-games.index',
+            compact('kahoot_games', 'order_by', 'order', 'search_by_name')
+        );
+    }
+
+
+    public function filtered(Request $request)
+    {
+        // Values
+        $order_by = $request->post('order_by', 'nombre_concurso');
+        $order = $request->post('order', 'asc');
         $page = $request->post('page', 1);
         $search_by_name = $request->post('search_by_name');
 
-        $porPagina = config('kahoot.pagination'); // Número de elementos por página
+        // Number of items per page
+        $itemsPerPage = config('kahoot.pagination');
 
-        // Obtener los juegos ordenados, con paginación y si se da la búsqueda
+        // Get the games ordered, with pagination and search (if any)
         $kahoot_games = KahootGame::when($search_by_name, function ($query, $search_by_name) {
             return $query->where('nombre_concurso', 'like', "%$search_by_name%");
-            })
-            ->orderBy($ordenado_por, $orden)
-            ->paginate($porPagina, ['*'], 'page', $page);
+        })
+            ->orderBy($order_by, $order)
+            ->paginate($itemsPerPage, ['*'], 'page', $page);
 
         return view('kahoot-games.index',
-            compact('kahoot_games', 'ordenado_por', 'orden', 'search_by_name'));
+            compact('kahoot_games', 'order_by', 'order', 'search_by_name'));
     }
 
     /**
@@ -45,12 +65,17 @@ class KahootGameController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nombre_concurso' => 'required|string',
-            'fecha_celebracion' => 'required|date',
-            'numero_participantes' => 'required|integer',
+            'contest_name' => 'required|string',
+            'event_date' => 'required|date',
+            'participants' => 'required|integer',
         ]);
 
-        KahootGame::create($validated);
+        KahootGame::create([
+            'nombre_concurso' => $validated['contest_name'],
+            'fecha_celebracion' => $validated['event_date'],
+            'numero_participantes' => $validated['participants'],
+        ]);
+
         return redirect()->route('kahoot-games.index');
     }
 
@@ -76,12 +101,16 @@ class KahootGameController extends Controller
     public function update(Request $request, KahootGame $kahoot_game)
     {
         $validated = $request->validate([
-            'nombre_concurso' => 'required|string',
-            'fecha_celebracion' => 'required|date',
-            'numero_participantes' => 'required|integer',
+            'contest_name' => 'required|string',
+            'event_date' => 'required|date',
+            'participants' => 'required|integer',
         ]);
 
-        $kahoot_game->update($validated);
+        $kahoot_game->update([
+            'nombre_concurso' => $validated['contest_name'],
+            'fecha_celebracion' => $validated['event_date'],
+            'numero_participantes' => $validated['participants'],
+        ]);
         return redirect()->route('kahoot-games.index');
     }
 

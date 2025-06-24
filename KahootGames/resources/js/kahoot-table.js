@@ -1,10 +1,10 @@
-function ordenarPor(campo) {
-    const form = document.getElementById('form_ordenacion');
-    const actual = document.getElementById('ordenado_por').value;
-    const orden = document.getElementById('orden').value;
+function orderedBy(field) {
+    const form = document.getElementById('order_form');
+    const current = document.getElementById('order_by').value;
+    const order = document.getElementById('order').value;
 
-    document.getElementById('ordenado_por').value = campo;
-    document.getElementById('orden').value = (actual === campo && orden === 'asc') ? 'desc' : 'asc';
+    document.getElementById('order_by').value = field;
+    document.getElementById('order').value = (current === field && order === 'asc') ? 'desc' : 'asc';
     document.getElementById('pageInput').value = 1;
     form.submit();
 }
@@ -16,11 +16,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const page = new URL(this.href).searchParams.get('page');
             if (page){
                 document.getElementById('pageInput').value = page;
-                document.getElementById('form_ordenacion').submit();
+                document.getElementById('order_form').submit();
             }
         });
     });
 });
 
-window.ordenarPor = ordenarPor;
-
+window.orderedBy = orderedBy;
