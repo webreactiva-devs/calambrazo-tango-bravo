@@ -75,6 +75,7 @@ class KahootGameController extends Controller
             'fecha_celebracion' => $validated['event_date'],
             'numero_participantes' => $validated['participants'],
         ]);
+
         return redirect()->route('kahoot-games.index');
     }
 
