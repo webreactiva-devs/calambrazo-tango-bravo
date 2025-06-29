@@ -167,7 +167,7 @@ class KahootGameController extends Controller
         $kahoot->delete();
 
         return response()->json([
-            'message' => 'Kahoot game deleted'
+            'message' => 'Kahoot game deleted.'
         ], Response::HTTP_OK);
     }
 }
