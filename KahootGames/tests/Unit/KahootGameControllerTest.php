@@ -5,11 +5,10 @@ use App\Models\KahootGame;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
-use Symfony\Component\HttpFoundation\Response;
 use function Pest\Laravel\actingAs;
 use Tests\TestCase;
+
 
 uses(TestCase::class, RefreshDatabase::class);
 
@@ -30,19 +29,27 @@ function makeRequest(string $method, array $data = [], array $query = []): Reque
 }
 
 /**
- * 1. Acceso sin sesión ─ esperamos que el middleware lance AuthException
+ * 1. Access without a session — the middleware should throw an AuthenticationException
  */
-test('redirect to login if no session', function () {
+test('Redirect to login if no session', function () {
     $this->expectException(\Illuminate\Auth\AuthenticationException::class);
 
-    // Llamamos al método index sin usuario autenticado
-    controller()->index(makeRequest('GET'));
+    $request  = makeRequest('GET');
+    // Load the auth middleware
+    /** @var \Illuminate\Auth\Middleware\Authenticate $authMw */
+    $authMw = app(\Illuminate\Auth\Middleware\Authenticate::class);
+
+    // Call the index method without a logged-in user
+    $authMw->handle(
+        $request,
+        fn ($req) => controller()->index($req) // next step
+    );
 });
 
 /**
- * 2. Listado (index)
+ * 2. List
  */
-test('show list of kahoot games', function () {
+test('Show list of Kahoot games', function () {
     actingAs(User::factory()->create());
     $kahoot = KahootGame::factory()->create();
 
@@ -54,9 +61,9 @@ test('show list of kahoot games', function () {
 });
 
 /**
- * 3. Formulario create
+ * 3. Create form
  */
-test('display the create form', function () {
+test('Display the create form', function () {
     actingAs(User::factory()->create());
 
     $response = controller()->create();
@@ -67,9 +74,9 @@ test('display the create form', function () {
 });
 
 /**
- * 4. Almacenar nuevo registro (store)
+ * 4. Store/save new record
  */
-test('create a new kahoot game', function () {
+test('Create a new Kahoot game', function () {
     actingAs(User::factory()->create());
 
     $kahoot  = KahootGame::factory()->make();   // no persiste
@@ -89,9 +96,9 @@ test('create a new kahoot game', function () {
 });
 
 /**
- * 5. Mostrar un kahoot concreto (show)
+ * 5. Show a specific Kahoot
  */
-test('show kahoot game data', function () {
+test('Show Kahoot game data', function () {
     actingAs(User::factory()->create());
     $kahoot = KahootGame::factory()->create();
 
@@ -103,9 +110,9 @@ test('show kahoot game data', function () {
 });
 
 /**
- * 6. Formulario edición (edit)
+ * 6. Edit form
  */
-test('show edit form', function () {
+test('Show edit form', function () {
     actingAs(User::factory()->create());
     $kahoot = KahootGame::factory()->create();
 
@@ -118,13 +125,13 @@ test('show edit form', function () {
 });
 
 /**
- * 7. Actualizar registro existente (update)
+ * 7. Update an existing record
  */
-test('update a kahoot game', function () {
+test('Update a Kahoot game', function () {
     actingAs(User::factory()->create());
 
-    $kahoot = KahootGame::factory()->create();  // existente
-    $nuevo  = KahootGame::factory()->make();    // datos nuevos
+    $kahoot = KahootGame::factory()->create();  // exits
+    $nuevo  = KahootGame::factory()->make();    // new data
 
     $payload = [
         'contest_name' => $nuevo->nombre_concurso,
@@ -143,9 +150,9 @@ test('update a kahoot game', function () {
 });
 
 /**
- * 8. Eliminar registro (destroy)
+ * 8. Destroy record
  */
-test('delete a kahoot game', function () {
+test('Delete a kahoot game', function () {
     actingAs(User::factory()->create());
     $kahoot = KahootGame::factory()->create();
 
